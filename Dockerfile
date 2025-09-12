@@ -1,30 +1,12 @@
-FROM ubuntu:22.04
+FROM ubuntu:20.04
 
-LABEL maintainer="you@example.com"
+# Gereken paketler: curl ve bash
+RUN apt-get update && apt-get install -y curl bash && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-ENV DEBIAN_FRONTEND=noninteractive
-ENV LANG=en_US.UTF-8
-ENV LANGUAGE=en_US:en
+# sshx kurulum scriptini indirip run modunda çalıştırmak için gerekli binaryleri hazırla
+RUN curl -sSf https://sshx.io/get | sh -s download && \
+    chmod +x ./sshx && \
+    mv ./sshx /usr/local/bin/
 
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    cmake \
-    git \
-    pkg-config \
-    libjson-c-dev \
-    libwebsockets-dev \
-    libssl-dev \
-    libtool \
-    autoconf \
-    automake \
-    bash \
-    curl && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
-
-RUN git clone --depth 1 https://github.com/tsl0922/ttyd.git /ttyd && \
-    cd /ttyd && mkdir build && cd build && \
-    cmake .. && make && make install
-
-EXPOSE 8080
-
-CMD ["ttyd", "-p", "8080", "bash"]
+# sshx'i run komutuyla başlat (bu terminali açar)
+CMD ["sshx", "run"]
