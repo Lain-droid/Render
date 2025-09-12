@@ -1,4 +1,3 @@
 #!/bin/bash
 
-
-/usr/local/bin/gotty --permit-write --reconnect /bin/bash
+/usr/local/bin/ttyd -p 8080 bash
