@@ -1,17 +1,34 @@
-FROM ubuntu:20.04
-LABEL maintainer="wingnut0310 <wingnut0310@gmail.com>"
+# Dockerfile - Ubuntu 23.10 ile ttyd (kaynak derleme)
 
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US:en
+FROM ubuntu:23.10
 
-RUN apt-get update && apt-get install -y curl bash && \
-    curl -LO https://github.com/tsl0922/ttyd/releases/download/1.7.3/ttyd.x86_64 && \
-    mv ttyd.x86_64 /usr/local/bin/ttyd && chmod +x /usr/local/bin/ttyd && \
+LABEL maintainer="you@example.com"
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV LANG=en_US.UTF-8
+ENV LANGUAGE=en_US:en
+
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    cmake \
+    git \
+    pkg-config \
+    libjson-c-dev \
+    libwebsockets-dev \
+    libssl-dev \
+    libtool \
+    autoconf \
+    automake \
+    bash \
+    curl && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-COPY /run_ttyd.sh /run_ttyd.sh
-RUN chmod 744 /run_ttyd.sh
+# ttyd kaynak kodunu indir ve derle
+RUN git clone --depth 1 https://github.com/tsl0922/ttyd.git /ttyd && \
+    cd /ttyd && \
+    mkdir build && cd build && \
+    cmake .. && make && make install
 
 EXPOSE 8080
 
-CMD ["/bin/bash", "/run_ttyd.sh"]
+CMD ["ttyd", "-p", "8080", "bash"]
