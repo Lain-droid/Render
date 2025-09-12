@@ -11,12 +11,11 @@ RUN apt-get update && \
     apt-get install -y \
     curl \
     ca-certificates \
-    libjson-c5 \
-    libwebsockets16 \
+    libjson-c-dev \
+    libwebsockets-dev \
     libssl3 \
     bash && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # ttyd indir (en son stabil sürüm)
 RUN curl -sL https://github.com/tsl0922/ttyd/releases/latest/download/ttyd.x86_64 \
