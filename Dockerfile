@@ -1,16 +1,16 @@
-FROM debian:unstable
+FROM ubuntu:20.04
 
 # Ortam değişkenleri
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Güncelleme, yükseltme ve sshx kurulumu
+# Güncelleme, temel araçlar ve SSHX kurulumu
 RUN apt-get update && apt-get upgrade -y && \
-    apt-get install -y curl && \
-    curl -sSf https://sshx.io/get | sh -s run && \
+    apt-get install -y curl ca-certificates && \
+    curl -sSf https://sshx.io/get | sh && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# SSHX portu aç
+# SSHX'in kullanacağı port (örnek: 2222)
 EXPOSE 2222
 
-# SSHX'i arka planda başlatmak için komut (örnek)
-CMD ["sshx", "-p", "2222"]
+# SSHX'i başlat
+CMD ["sshx"]
