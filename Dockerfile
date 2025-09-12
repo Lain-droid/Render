@@ -1,23 +1,33 @@
-FROM ubuntu:20.04
+FROM debian:trixie
+
 LABEL maintainer="wingnut0310 <wingnut0310@gmail.com>"
 
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
-ENV GOTTY_TAG_VER v1.0.1
+ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get -y update && \
-    apt-get install -y curl && \
-    curl -sLk https://github.com/yudai/gotty/releases/download/${GOTTY_TAG_VER}/gotty_linux_amd64.tar.gz \
-    | tar xzC /usr/local/bin && \
-    apt-get purge --auto-remove -y curl && \
+# Gerekli paketleri kur
+RUN apt-get update && \
+    apt-get install -y \
+    curl \
+    ca-certificates \
+    libjson-c5 \
+    libwebsockets16 \
+    libssl3 \
+    bash && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists*
+    rm -rf /var/lib/apt/lists/*
 
+# ttyd indir (en son stabil sürüm)
+RUN curl -sL https://github.com/tsl0922/ttyd/releases/latest/download/ttyd.x86_64 \
+    -o /usr/local/bin/ttyd && \
+    chmod +x /usr/local/bin/ttyd
 
-COPY /run_gotty.sh /run_gotty.sh
+# Script dosyasını kopyala
+COPY run_ttyd.sh /run_ttyd.sh
+RUN chmod +x /run_ttyd.sh
 
-RUN chmod 744 /run_gotty.sh
+EXPOSE 7681
 
-EXPOSE 8080
-
-CMD ["/bin/bash","/run_gotty.sh"]
+# Başlat
+CMD ["/bin/bash", "/run_ttyd.sh"]
