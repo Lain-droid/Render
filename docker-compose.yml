@@ -1,8 +1,13 @@
-my-gotty:
-  hostname: mygotty
-  ports:
-  - 8989:8080
-  tty: true
-  image: modenaf360/gotty:latest
-  stdin_open: true
-  tty: true                     #using bash TTY mode (pseudo-TTY)
+version: '3.8'
+
+services:
+  my-terminal:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: my-ttyd
+    hostname: my-ttyd-host
+    ports:
+      - "8989:7681"
+    stdin_open: true
+    tty: true
