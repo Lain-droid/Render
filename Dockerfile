@@ -1,15 +1,20 @@
-FROM node:20
+FROM ubuntu:20.04
 
 LABEL maintainer="wingnut0310 <wingnut0310@gmail.com>"
 
-# Ortam değişkenleri
-ENV PORT=3000
+ENV DEBIAN_FRONTEND=noninteractive
+ENV LANG=en_US.UTF-8
+ENV LANGUAGE=en_US:en
+ENV TERM=xterm
 
-# wetty'yi kur
-RUN npm install -g wetty
+RUN apt-get update && \
+    apt-get install -y curl ca-certificates && \
+    curl -L https://github.com/yudai/webtty/releases/download/5.0.0/webtty_linux_amd64.tar.gz | tar xz -C /usr/local/bin && \
+    chmod +x /usr/local/bin/webtty && \
+    apt-get remove --purge -y curl && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-# Portu aç
-EXPOSE 3000
+EXPOSE 8080
 
-# Bash shell ile web terminal başlat
-CMD ["wetty", "--port", "3000", "--command", "bash"]
+CMD ["webtty", "--port", "8080", "--command", "bash"]
